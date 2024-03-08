@@ -2,8 +2,9 @@ use std::{
     fmt::{Debug, Display},
     fs::File,
     io::{BufWriter, Write},
-    ops::Add,
 };
+
+mod vec3;
 
 fn main() -> std::io::Result<()> {
     let mut buffer = BufWriter::new(File::create("out.ppm")?);
@@ -107,55 +108,6 @@ impl Debug for Ppm<'_, Image> {
     }
 }
 
-struct Vec3<T> {
-    x: T,
-    y: T,
-    z: T,
-}
-
-impl<T> Vec3<T> {
-    fn new(x: T, y: T, z: T) -> Self {
-        Self { x, y, z }
-    }
-}
-
-impl<T> Debug for Vec3<T>
-where
-    T: Debug + Display,
-{
-    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(formatter, "({}, {}, {})", self.x, self.y, self.z)
-    }
-}
-
-impl<T> Add for Vec3<T>
-where
-    T: Add<Output = T>,
-{
-    type Output = Vec3<T>;
-    fn add(self, rhs: Self) -> Self::Output {
-        Vec3::new(self.x + rhs.x, self.y + rhs.y, self.z + rhs.z)
-    }
-}
-
-#[cfg(test)]
-mod test_vec3 {
-    use super::*;
-
-    #[test]
-    fn test_vec3() {
-        let v = Vec3::new(1, 2, 3);
-        k9::snapshot!(v, "(1, 2, 3)");
-    }
-
-    #[test]
-    fn test_add_vec3() {
-        let v1 = Vec3::new(1, 2, 3);
-        let v2 = Vec3::new(4, 5, 6);
-        let v3 = v1 + v2;
-        k9::snapshot!(v3, "(5, 7, 9)");
-    }
-}
 #[cfg(test)]
 mod test_ppm {
     use super::*;
